@@ -1,0 +1,61 @@
+https://github.com/OpenSC/libp11
+  http://cedric.dufour.name/blah/IT/SmartCardsHowto.html
+  https://stafwag.github.io/blog/blog/2020/04/29/setup-an-ca-with-smartcard/
+  https://developers.yubico.com/YubiHSM2/Usage_Guides/OpenSSL_with_pkcs11_engine.html
+https://github.com/OpenSC/OpenSC/wiki/SmartCardHSM
+    e.g. explains how to create a key pair
+https://github.com/OpenSC/OpenSC/wiki/Using-pkcs11-tool-and-OpenSSL
+
+
+Erstmal Status prüfen
+
+"C:\Program Files\OpenSC Project\OpenSC\tools\pkcs11-tool.exe" -T
+--> warum hat das Token keinen vernünftigen Namen (Label)??
+
+"C:\Program Files\OpenSC Project\OpenSC\tools\pkcs11-tool.exe" -M
+Supported mechanisms:
+  SHA-1, digest
+  SHA256, digest
+  SHA384, digest
+  SHA512, digest
+  MD5, digest
+  RIPEMD160, digest
+  GOSTR3411, digest
+  ECDSA, keySize={192,521}, hw, sign, other flags=0x1d00000
+  ECDSA-SHA1, keySize={192,521}, hw, sign, other flags=0x1d00000
+  ECDH1-COFACTOR-DERIVE, keySize={192,521}, hw, derive, other flags=0x1d00000
+  ECDH1-DERIVE, keySize={192,521}, hw, derive, other flags=0x1d00000
+  ECDSA-KEY-PAIR-GEN, keySize={192,521}, hw, generate_key_pair, other flags=0x1d00000
+  RSA-X-509, keySize={1024,4096}, hw, decrypt, sign, verify
+  RSA-PKCS, keySize={1024,4096}, hw, decrypt, sign, verify
+  SHA1-RSA-PKCS, keySize={1024,4096}, sign, verify
+  SHA256-RSA-PKCS, keySize={1024,4096}, sign, verify
+  SHA384-RSA-PKCS, keySize={1024,4096}, sign, verify
+  SHA512-RSA-PKCS, keySize={1024,4096}, sign, verify
+  MD5-RSA-PKCS, keySize={1024,4096}, sign, verify
+  RIPEMD160-RSA-PKCS, keySize={1024,4096}, sign, verify
+  RSA-PKCS-PSS, keySize={1024,4096}, hw, sign
+  SHA1-RSA-PKCS-PSS, keySize={1024,4096}, sign
+  SHA256-RSA-PKCS-PSS, keySize={1024,4096}, sign
+  RSA-PKCS-KEY-PAIR-GEN, keySize={1024,4096}, generate_key_pair
+
+"C:\Program Files\OpenSC Project\OpenSC\tools\pkcs11-tool.exe" --login --test
+
+"C:\Program Files\OpenSC Project\OpenSC\tools\pkcs15-tool.exe" --list-info
+"C:\Program Files\OpenSC Project\OpenSC\tools\pkcs15-tool.exe" --list-keys
+"C:\Program Files\OpenSC Project\OpenSC\tools\pkcs15-tool.exe" --list-certificates
+"C:\Program Files\OpenSC Project\OpenSC\tools\pkcs15-tool.exe" --list-pins
+"C:\Program Files\OpenSC Project\OpenSC\tools\pkcs15-tool.exe" --list-data-objects
+"C:\Program Files\OpenSC Project\OpenSC\tools\pkcs15-tool.exe" --dump
+
+"C:\Program Files\OpenSC Project\OpenSC\tools\sc-hsm-tool.exe" -v
+"C:\Program Files\OpenSC Project\OpenSC\tools\sc-hsm-tool.exe" -serial
+  basically the same output as with -v
+
+"C:\Program Files\OpenSC Project\OpenSC\tools\opensc-tool.exe" --version
+  OpenSC-0.19.0
+"C:\Program Files\OpenSC Project\OpenSC\tools\opensc-tool.exe" --serial
+"C:\Program Files\OpenSC Project\OpenSC\tools\opensc-tool.exe" --name
+"C:\Program Files\OpenSC Project\OpenSC\tools\opensc-tool.exe" --list-algorithms
+"C:\Program Files\OpenSC Project\OpenSC\tools\opensc-tool.exe" --list-drivers
+"C:\Program Files\OpenSC Project\OpenSC\tools\opensc-tool.exe" --list-files
