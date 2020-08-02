@@ -7,14 +7,14 @@ with a USB connector.
 
 Most of it's functionality can be accessed through a 
 [PKCS#11](http://docs.oasis-open.org/pkcs11/pkcs11-base/v2.40/errata01/os/pkcs11-base-v2.40-errata01-os-complete.html)
-interface. Note that in PKCS#1 terminology, the HSM is called the token.
+interface. Note that in PKCS#11 terminology, the HSM is called the token which itself is in a slot (of a card reader).
 
 See [https://github.com/OpenSC/OpenSC/wiki/SmartCardHSM](https://github.com/OpenSC/OpenSC/wiki/SmartCardHSM) for an overview.
 
 ## Software
 
 ### How To Install
-On OpenSUSE Linux, all SW packages mentioned below can be installed from the standard repositories.
+On OpenSUSE Leap 15.2 Linux, all SW packages mentioned below can be installed from the standard repositories.
 
 On Windows
 - OpenSSL: is best compiled from the [sources](https://www.openssl.org/source/)
@@ -30,8 +30,13 @@ The pkcs11-tool is provided by the [OpenSC](https://github.com/OpenSC/OpenSC/wik
 It allows to manage and use keys on the SmartCard-HSM.
 
 
+### [opensc-pkcs11.so / opensc-pkcs11.dll](https://github.com/OpenSC/OpenSC)
+This is the PKCS#11 library from the OpenSC.
+The supported HW is listed at https://github.com/OpenSC/OpenSC/wiki/Supported-hardware-(smart-cards-and-USB-tokens).
+
+
 ### [libp11](https://github.com/OpenSC/libp11)
-libp11 is the PKCS#11 library offered by OpenSC.
+libp11 is a library offered by OpenSC, providing a providing a higher-level (compared to the PKCS#11 library) interface to access PKCS#11 objects
 It offers access to SmartCard HSM's like the Nitrokey HSM
 
 ### [engine_pkcs11](https://github.com/OpenSC/engine_pkcs11)
@@ -90,10 +95,12 @@ Delete a key
 * ``pkcs11-tool.exe -l --delete-object --type privkey --id 111``
 
 ### Check if OpenSSL finds the pkcs11 engine
-Call
+Call [`openssl engine`](https://www.openssl.org/docs/man1.1.1/man1/engine.html) to find out whether OpenSSL finds the pkcs11 engine
 * ``openssl engine pkcs11 -c -vvvv``
 
-For the 2nd example, we may want to have something like this as the hsm.conf
+On my OpenSUSE Leap 15.2 installation, this works already - probably because the PKCS#11 engine and library are installed in some default directories.
+
+If you need or want to have the configuration more explicit, then use something like this as this `hsm.conf`
 
     # PKCS11 engine config
     openssl_conf = openssl_def
