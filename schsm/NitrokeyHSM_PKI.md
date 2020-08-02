@@ -115,7 +115,7 @@ For the 2nd example, we may want to have something like this as the hsm.conf
     dynamic_path = /usr/lib64/engines-1.1/pkcs11.so
     MODULE_PATH = /usr/lib64/opensc-pkcs11.so
     init = 0
-    PIN = 123456
+    PIN = YYYYYY
 
 And then try again, with the hsm.conf specified by the OPENSSL_CONF environment variable
 * ``OPENSSL_CONF=./hsm.conf openssl engine pkcs11 -c -vvvv`
@@ -130,9 +130,13 @@ with some restrictions applied
 [3](https://support.nitrokey.com/t/nitrokey-hsm-as-ca-for-signing-csrs/1107)
 
 With that given, we can call something like 
+* ``openssl rsautl -engine pkcs11 -keyform engine -inkey "pkcs11:object=Key1;type=private;pin-value=YYYYYY" -sign -in aaa.txt -out aaa.sig``
+
+or (if you want to be prompted for the PIN rather than providing it on the command line):
 * ``openssl rsautl -engine pkcs11 -keyform engine -inkey "pkcs11:object=Key1;type=private" -sign -in aaa.txt -out aab.sig``
-or
-* ``OPENSSL_CONF=./hsm.conf openssl rsautl -engine pkcs11 -keyform engine -inkey "pkcs11:object=Key1;type=private" -sign -in aaa.txt -out aaj.sig``
+
+or (if you explicitly want to specify the OpenSSL config file):
+* ``OPENSSL_CONF=./hsm.conf openssl rsautl -engine pkcs11 -keyform engine -inkey "pkcs11:object=Key1;type=private" -sign -in aaa.txt -out aac.sig``
 
 Further examples: see https://www.nitrokey.com/de/documentation/applications#p:nitrokey-hsm&os:windows&a:pki--certificate-authority-ca
 
@@ -143,13 +147,19 @@ Further examples: see https://www.nitrokey.com/de/documentation/applications#p:n
 
 
 ## Appendix 1: OpenSSL configuration
+Details on the OpenSSL configuration file are provided in the following man pages:
+* https://www.openssl.org/docs/man1.1.1/man1/openssl.html
+* https://www.openssl.org/docs/man1.1.1/man5/config.html
+* https://www.openssl.org/docs/man1.1.1/man1/ca.html
+* https://www.openssl.org/docs/man1.1.1/man1/req.html
+* https://www.openssl.org/docs/man1.1.1/man1/x509.html
 
 ### OpenSSL PKCS#11 engine configuration basics
 
 ### OpenSSL CA configuration basics
 
-??? https://jamielinux.com/docs/openssl-certificate-authority/introduction.html
-https://raymii.org/s/articles/Get_Started_With_The_Nitrokey_HSM.html
+* https://jamielinux.com/docs/openssl-certificate-authority/introduction.html
+* https://raymii.org/s/articles/Get_Started_With_The_Nitrokey_HSM.html
 
 ### OpenSSL CSR configuration basics
 
