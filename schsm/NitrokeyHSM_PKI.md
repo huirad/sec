@@ -3,7 +3,7 @@
 ## Hardware
 The [Nitrokey HSM](https://shop.nitrokey.com/shop/product/nk-hsm-2-nitrokey-hsm-2-7)
 is a [SmartCard-HSM](https://www.smartcard-hsm.com/)
-with a USB connector.
+integrated with a USB card reader
 
 Most of it's functionality can be accessed through a 
 [PKCS#11](http://docs.oasis-open.org/pkcs11/pkcs11-base/v2.40/errata01/os/pkcs11-base-v2.40-errata01-os-complete.html)
@@ -153,7 +153,7 @@ or - if you want to identify the key by its ID insteead of its name (note the %X
 or - if you prefer openssl [`openssl dgst`](https://www.openssl.org/docs/man1.1.1/man1/dgst.html) to sign:
 * ``OPENSSL_CONF=./hsm.conf openssl dgst -engine pkcs11 -keyform engine -sign "pkcs11:id=%01%11;type=private" -sha256 -out aam.sig aaa.txt``
 
-or - same bit with explicit sigopt:
+or - same but with explicit sigopt:
 * ``OPENSSL_CONF=./hsm.conf openssl dgst -engine pkcs11 -keyform engine -sign "pkcs11:id=%01%11;type=private" -sha256 -sigopt rsa_padding_mode:pkcs1 -out aan.sig aaa.txt``
 * ``OPENSSL_CONF=./hsm.conf openssl dgst -engine pkcs11 -keyform engine -sign "pkcs11:id=%01%11;type=private" -sha256 -sigopt rsa_padding_mode:pss -out aao.sig aaa.txt``
 
