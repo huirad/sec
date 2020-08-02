@@ -124,19 +124,35 @@ And then try again, with the hsm.conf specified by the OPENSSL_CONF environment 
 ### Sign something using OpenSSL and the PKCS#11 engine
 Note that keys must be defined in form of a [RFC7512](https://tools.ietf.org/html/rfc7512) 
 as used in the [libp11 example](https://github.com/OpenSC/libp11#using-p11tool-and-openssl-from-the-command-line)
-with some restrictions applied
+(with some restrictions applied regarding the YubiKey/SmartCard HSM
 [1](https://github.com/OpenSC/engine_pkcs11/issues/28)
 [2](https://github.com/OpenSC/OpenSC/issues/1429)
 [3](https://support.nitrokey.com/t/nitrokey-hsm-as-ca-for-signing-csrs/1107)
+and maybe some slightly different flavor when using the Yubikey
+[Y](https://developers.yubico.com/YubiHSM2/Usage_Guides/OpenSSL_with_libp11.html) )
 
-With that given, we can call something like 
+With that given, we can call [`openssl rsautl`](https://www.openssl.org/docs/man1.1.1/man1/rsautl.html) like 
 * ``openssl rsautl -engine pkcs11 -keyform engine -inkey "pkcs11:object=Key1;type=private;pin-value=YYYYYY" -sign -in aaa.txt -out aaa.sig``
 
-or (if you want to be prompted for the PIN rather than providing it on the command line):
+or - if you want to be prompted for the PIN rather than providing it on the command line:
 * ``openssl rsautl -engine pkcs11 -keyform engine -inkey "pkcs11:object=Key1;type=private" -sign -in aaa.txt -out aab.sig``
 
-or (if you explicitly want to specify the OpenSSL config file):
+or - if you explicitly want to specify the OpenSSL config file:
 * ``OPENSSL_CONF=./hsm.conf openssl rsautl -engine pkcs11 -keyform engine -inkey "pkcs11:object=Key1;type=private" -sign -in aaa.txt -out aac.sig``
+
+or - if you want to identify the key by its ID insteead of its name (note the %XX%XX notation as key ID's are actually represented by UTF/HEX values):
+* ``OPENSSL_CONF=./hsm.conf openssl rsautl -engine pkcs11 -keyform engine -inkey "pkcs11:id=%01%11;type=private" -sign -in aaa.txt -out aal.sig``
+
+or - if you prefer openssl [`openssl dgst`](https://www.openssl.org/docs/man1.1.1/man1/dgst.html) to sign:
+* ``OPENSSL_CONF=./hsm.conf openssl dgst -engine pkcs11 -keyform engine -sign "pkcs11:id=%01%11;type=private" -sha256 -out aam.sig aaa.txt``
+
+or - same bit with explicit sigopt:
+* ``OPENSSL_CONF=./hsm.conf openssl dgst -engine pkcs11 -keyform engine -sign "pkcs11:id=%01%11;type=private" -sha256 -sigopt rsa_padding_mode:pkcs1 -out aan.sig aaa.txt``
+* ``OPENSSL_CONF=./hsm.conf openssl dgst -engine pkcs11 -keyform engine -sign "pkcs11:id=%01%11;type=private" -sha256 -sigopt rsa_padding_mode:pss -out aao.sig aaa.txt``
+
+or - if you prefer openssl [`openssl pkeyutl`](https://www.openssl.org/docs/man1.1.1/man1/pkeyutl.html) to sign:
+* ``OPENSSL_CONF=./hsm.conf openssl pkeyutl -engine pkcs11 -keyform engine -inkey "pkcs11:id=%01%11;type=private" -sign -in aaa.txt -out aaq.sig``
+* ``OPENSSL_CONF=./hsm.conf openssl pkeyutl -engine pkcs11 -keyform engine -inkey "pkcs11:id=%01%11;type=private" -sign -in aaa.txt -out aar.sig -pkeyopt rsa_padding_mode:pkcs1``
 
 Further examples: see https://www.nitrokey.com/de/documentation/applications#p:nitrokey-hsm&os:windows&a:pki--certificate-authority-ca
 
