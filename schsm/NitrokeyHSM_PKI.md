@@ -118,7 +118,7 @@ For the 2nd example, we may want to have something like this as the hsm.conf
     PIN = YYYYYY
 
 And then try again, with the hsm.conf specified by the OPENSSL_CONF environment variable
-* ``OPENSSL_CONF=./hsm.conf openssl engine pkcs11 -c -vvvv`
+* ``OPENSSL_CONF=./hsm.conf openssl engine pkcs11 -c -vvvv``
 
 
 ### Sign something using OpenSSL and the PKCS#11 engine
