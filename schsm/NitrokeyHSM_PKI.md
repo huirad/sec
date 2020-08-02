@@ -94,27 +94,28 @@ Call
 * ``openssl engine pkcs11 -c -vvvv``
 
 For the 2nd example, we may want to have something like this as the hsm.conf
-  # PKCS11 engine config
-  openssl_conf = openssl_def
 
-  [openssl_def]
-  engines = engine_section
+    # PKCS11 engine config
+    openssl_conf = openssl_def
 
-  [req]
-  distinguished_name = req_distinguished_name
+    [openssl_def]
+    engines = engine_section
+   
+    [req]
+    distinguished_name = req_distinguished_name
+   
+    [req_distinguished_name]
+    # empty.
 
-  [req_distinguished_name]
-  # empty.
+    [engine_section]
+    pkcs11 = pkcs11_section
 
-  [engine_section]
-  pkcs11 = pkcs11_section
-
-  [pkcs11_section]
-  engine_id = pkcs11
-  dynamic_path = /usr/lib64/engines-1.1/pkcs11.so
-  MODULE_PATH = /usr/lib64/opensc-pkcs11.so
-  init = 0
-  PIN = 123456
+    [pkcs11_section]
+    engine_id = pkcs11
+    dynamic_path = /usr/lib64/engines-1.1/pkcs11.so
+    MODULE_PATH = /usr/lib64/opensc-pkcs11.so
+    init = 0
+    PIN = 123456
 
 And then try again, with the hsm.conf specified by the OPENSSL_CONF environment variable
 * ``OPENSSL_CONF=./hsm.conf openssl engine pkcs11 -c -vvvv`
