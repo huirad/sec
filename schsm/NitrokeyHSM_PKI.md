@@ -89,11 +89,51 @@ Sign something with the RSA key (check ``pkcs11-tool.exe -M`` for the available 
 Delete a key
 * ``pkcs11-tool.exe -l --delete-object --type privkey --id 111``
 
+### Check if OpenSSL finds the pkcs11 engine
+Call
+* ``openssl engine pkcs11 -c -vvvv``
+
+For the 2nd example, we may want to have something like this as the hsm.conf
+  # PKCS11 engine config
+  openssl_conf = openssl_def
+
+  [openssl_def]
+  engines = engine_section
+
+  [req]
+  distinguished_name = req_distinguished_name
+
+  [req_distinguished_name]
+  # empty.
+
+  [engine_section]
+  pkcs11 = pkcs11_section
+
+  [pkcs11_section]
+  engine_id = pkcs11
+  dynamic_path = /usr/lib64/engines-1.1/pkcs11.so
+  MODULE_PATH = /usr/lib64/opensc-pkcs11.so
+  init = 0
+  PIN = 123456
+
+And then try again, with the hsm.conf specified by the OPENSSL_CONF environment variable
+* ``OPENSSL_CONF=./hsm.conf openssl engine pkcs11 -c -vvvv`
+
 
 ### Sign something using OpenSSL and the PKCS#11 engine
-Just to demnonstrate the basic usage of the engine and how to identify keys when using openssl
+Note that keys must be defined in form of a [RFC7512](https://tools.ietf.org/html/rfc7512) 
+as used in the [libp11 example](https://github.com/OpenSC/libp11#using-p11tool-and-openssl-from-the-command-line)
+with some restrictions applied
+[1](https://github.com/OpenSC/engine_pkcs11/issues/28)
+[2](https://github.com/OpenSC/OpenSC/issues/1429)
+[3](https://support.nitrokey.com/t/nitrokey-hsm-as-ca-for-signing-csrs/1107)
 
-https://www.nitrokey.com/de/documentation/applications#p:nitrokey-hsm&os:windows&a:pki--certificate-authority-ca
+With that given, we can call something like 
+* ``openssl rsautl -engine pkcs11 -keyform engine -inkey "pkcs11:object=Key1;type=private" -sign -in aaa.txt -out aab.sig``
+or
+* ``OPENSSL_CONF=./hsm.conf openssl rsautl -engine pkcs11 -keyform engine -inkey "pkcs11:object=Key1;type=private" -sign -in aaa.txt -out aaj.sig``
+
+Further examples: see https://www.nitrokey.com/de/documentation/applications#p:nitrokey-hsm&os:windows&a:pki--certificate-authority-ca
 
 ### Create a root certificate
 
