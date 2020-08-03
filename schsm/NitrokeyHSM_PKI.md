@@ -100,7 +100,7 @@ Call [`openssl engine`](https://www.openssl.org/docs/man1.1.1/man1/engine.html) 
 
 On my OpenSUSE Leap 15.2 installation, this works already - probably because the PKCS#11 engine and library are installed in some default directories.
 
-If you need or want to have the configuration more explicit, then use something like this as this `hsm.conf`
+If you need or want to have the configuration more explicit, then use something like this as this `hsm.conf`:
 
     # PKCS11 engine config
     openssl_conf = openssl_def
@@ -139,6 +139,7 @@ If you need or want to have the configuration more explicit, then use something 
     MODULE_PATH = /usr/lib64/opensc-pkcs11.so
     init = 0
     PIN = YYYYYY
+Note that this `hsm.conf` contains additionally some settings which are needed later for `openssl req` and `openssl ca`.
 
 And then try again, with the hsm.conf specified by the OPENSSL_CONF environment variable
 * ``OPENSSL_CONF=./hsm.conf openssl engine pkcs11 -c -vvvv``
