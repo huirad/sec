@@ -54,6 +54,15 @@ It may be a good idea to try these commands before and after initialization or c
 * ``pkcs11-tool -O`` Display a list of objects. Private keys are only displayed when used with either --login or --pin.
 * ``pkcs11-tool -t`` Perform some tests on the token. This option is most useful when used with either --login or --pin.
 
+Also the following commands can be interesting
+* ``pkcs15-tool --list-keys``
+* ``pkcs15-tool --list-certificates``
+* ``pkcs15-tool --list-pins``
+* ``pkcs15-tool --list-data-objects``
+* ``pkcs15-tool --dump``
+* ``opensc-tool --list-algorithms``
+* ``sc-hsm-tool -v``
+
 
 ### Initialize the Nitrokey
 Main Reference: https://github.com/OpenSC/OpenSC/wiki/SmartCardHSM#initialize-the-device
@@ -288,7 +297,9 @@ In the `openssl.cnf`, I found it best to use forward slashes in paths instead of
 * https://framkant.org/2018/04/smartcard-hsm-backed-openssl-ca/
 * https://jamielinux.com/docs/openssl-certificate-authority/index.html
 * http://cedric.dufour.name/blah/IT/SmartCardsHowto.html
+* https://stafwag.github.io/blog/blog/2020/04/29/setup-an-ca-with-smartcard/
 * https://raymii.org/s/articles/Get_Started_With_The_Nitrokey_HSM.html
 * https://developers.yubico.com/yubico-piv-tool/YKCS11/Supported_applications/pkcs11tool.html
   * https://www.yubico.com/products/services-software/download/smart-card-drivers-tools/
+  * https://developers.yubico.com/YubiHSM2/Usage_Guides/OpenSSL_with_pkcs11_engine.html
  
