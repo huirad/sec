@@ -47,12 +47,12 @@ The engine_pkcs11 is a PKCS#11 engine for OpenSSL
 
 ### Some commands to test the Nitrokey
 It may be a good idea to try these commands before and after initialization or creation or manipulation of an object
-* ``pkcs11-tool.exe -I`` Display general token information
-* ``pkcs11-tool.exe -T`` List slots with tokens
-* ``pkcs11-tool.exe -L`` Display a list of available slots on the token.
-* ``pkcs11-tool.exe -M`` Display a list of mechanisms supported by the token.
-* ``pkcs11-tool.exe -O`` Display a list of objects. Private keys are only displayed when used with either --login or --pin.
-* ``pkcs11-tool.exe -t`` Perform some tests on the token. This option is most useful when used with either --login or --pin.
+* ``pkcs11-tool -I`` Display general token information
+* ``pkcs11-tool -T`` List slots with tokens
+* ``pkcs11-tool -L`` Display a list of available slots on the token.
+* ``pkcs11-tool -M`` Display a list of mechanisms supported by the token.
+* ``pkcs11-tool -O`` Display a list of objects. Private keys are only displayed when used with either --login or --pin.
+* ``pkcs11-tool -t`` Perform some tests on the token. This option is most useful when used with either --login or --pin.
 
 
 ### Initialize the Nitrokey
@@ -80,7 +80,7 @@ References:
 * https://github.com/OpenSC/OpenSC/wiki/Using-pkcs11-tool-and-OpenSSL
 
 Create a RSA keypair (if the ``--usage-sign`` option is left out, the key usage will be less restricted)
-* ``pkcs11-tool.exe -l --keypairgen --key-type rsa:2048 --id 111 --usage-sign --label "Key1"``
+* ``pkcs11-tool -l --keypairgen --key-type rsa:2048 --id 111 --usage-sign --label "Key1"``
 
 Export the public key (in ASN.1 DER SubjectPublicKeyInfo according [RFC5280](https://tools.ietf.org/html/rfc5280)) and check with openssl
 * ``pkcs11-tool -l --id 111 --read-object --type pubkey --output-file pubkey_111.der``
@@ -88,8 +88,8 @@ Export the public key (in ASN.1 DER SubjectPublicKeyInfo according [RFC5280](htt
 * ``openssl asn1parse --inform der --in pubkey_111.der``
 
 Sign something with the RSA key (check ``pkcs11-tool.exe -M`` for the available signature mechanisms)
-* ``pkcs11-tool.exe -s --id 111 -m SHA256-RSA-PKCS --input-file to_be_signed.txt --output-file sig_SHA_256_RSA_PKCS.sig``
-* ``pkcs11-tool.exe -s --id 111 -m SHA256-RSA-PKCS-PSS --input-file to_be_signed.txt --output-file sig_SHA_256_RSA_PKCS_PSS.sig``
+* ``pkcs11-tool -s --id 111 -m SHA256-RSA-PKCS --input-file to_be_signed.txt --output-file sig_SHA_256_RSA_PKCS.sig``
+* ``pkcs11-tool -s --id 111 -m SHA256-RSA-PKCS-PSS --input-file to_be_signed.txt --output-file sig_SHA_256_RSA_PKCS_PSS.sig``
 
 Delete a key
 * ``pkcs11-tool.exe -l --delete-object --type privkey --id 111``
@@ -181,9 +181,24 @@ Further examples: see https://www.nitrokey.com/de/documentation/applications#p:n
 
 ### Create a root certificate
 
+First create the root key in the HSM
+* ``pkcs11-tool -l --keypairgen --key-type rsa:2048 --id 1000 --usage-sign --label "Root"``
+
+Then create the root certificate
+* ``openssl req -engine pkcs11 -keyform engine -key "pkcs11:object=Root;type=private" -x509 -out "hsm_root_cert.pem" -subj "/CN=HSM root"``
+
+### Create a CSR
+
+First create the leaf key in the HSM
+* ``pkcs11-tool -l --keypairgen --key-type rsa:2048 --id 1001 --usage-sign --label "Leaf1"``
+
+Then create the CSR
+* ``openssl req -engine pkcs11 -keyform engine -key "pkcs11:object=Leaf1;type=private" -new -out "hsm_leaf1_csr.pem" -subj "/CN=HSM leaf1"``
+
 ### Sign a CSR to create a client certificate
 
-
+Now with the root and the CSR, just call
+* ``openssl ca -engine pkcs11 -keyform engine -in hsm_leaf1_csr.pem -out hsm_leaf1_cert.pem -keyfile "pkcs11:object=Root;type=private" -cert hsm_root_cert.pem -batch``
 
 ## Appendix 1: OpenSSL configuration
 Details on the OpenSSL configuration file are provided in the following man pages:
