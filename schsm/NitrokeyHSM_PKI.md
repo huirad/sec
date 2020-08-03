@@ -253,6 +253,34 @@ See example above
 
 ## Appendix 2: building the OpenSSL PKCS#11 engine on Windows
 
+As there is no binary delivery of the OpenSSL PKCS#11 engine for Windows, you have to build it by yourself.
+
+This is how I did it
+* compile OpenSSL 1.1.1 from the sources - compile diretly to the source directory are recommended in INSTALL
+* download the libp11 sources from https://github.com/OpenSC/libp11
+* compile libp11 as described in INSTALL.md - I had to tweak the OpenSSL directory structure a bit: create a dedicated lib directory
+* resulting files are libp11.dll and pkcs11.dll
+* set up a directory structure according the ENGINESDIR - place the .dll's there
+* create a openssl.cnf in the OPENSSLDIR where the .dll's are referred to
+
+In the `openssl.cnf`, I found it best to use forward slashes in paths instead of backslashes - and I took the liberty to copy the opensc-pkcs11.dll from the OpenSC install directory to my OpenSSL installation.
+
+    # PKCS11 engine config
+    openssl_conf = openssl_def
+
+    [openssl_def]
+    engines = engine_section
+
+    [engine_section]
+    pkcs11 = pkcs11_section
+    
+    [pkcs11_section]
+    engine_id = pkcs11
+    dynamic_path = M:/OpenSSL111g_libp11/lib/engines-1_1/pkcs11.dll
+    MODULE_PATH = M:/OpenSSL111g_libp11/lib/engines-1_1/opensc-pkcs11.dll
+    init = 0
+    PIN = YYYYYY
+
 ## Appendix 3: (Further) References
 * https://github.com/OpenSC/libp11
 * https://github.com/OpenSC/OpenSC/wiki/SmartCardHSM
