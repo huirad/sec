@@ -3,7 +3,7 @@
 ## Hardware
 The [Nitrokey HSM](https://shop.nitrokey.com/shop/product/nk-hsm-2-nitrokey-hsm-2-7)
 is a [SmartCard-HSM](https://www.smartcard-hsm.com/)
-integrated with a USB card reader
+integrated with a USB card reader.
 
 Most of it's functionality can be accessed through a 
 [PKCS#11](http://docs.oasis-open.org/pkcs11/pkcs11-base/v2.40/errata01/os/pkcs11-base-v2.40-errata01-os-complete.html)
@@ -173,11 +173,37 @@ Further examples: see https://www.nitrokey.com/de/documentation/applications#p:n
 Details on the OpenSSL configuration file are provided in the following man pages:
 * https://www.openssl.org/docs/man1.1.1/man1/openssl.html
 * https://www.openssl.org/docs/man1.1.1/man5/config.html
+
+The location of the OpenSSL configuration file is determined  as decribed in [`openssl conf`](https://www.openssl.org/docs/man1.1.1/man5/config.html) by 
+* the compile time variable `OPENSSLDIR` pointing to a directory containing the file `openssl.cnf`
+  * note that `openssl version -a` shows all compile time settings
+* the environment variable `OPENSSL_CONF`
+* the `-config` swithc which is present for some commands
+
+Some commands support specific configuration options:
 * https://www.openssl.org/docs/man1.1.1/man1/ca.html
 * https://www.openssl.org/docs/man1.1.1/man1/req.html
 * https://www.openssl.org/docs/man1.1.1/man1/x509.html
 
 ### OpenSSL PKCS#11 engine configuration basics
+The engine configuration is described in the [openssl config](https://www.openssl.org/docs/man1.1.1/man5/config.html) man page.
+Note that only the parameters `engine_id` and `dynamic_path` are common. 
+All other parameters are engine-specific and can be queried by calling `openssl engine pkcs11 -c -vvvv`.
+
+
+### OpenSSL req configuration basics
+The [`openssl req`](https://www.openssl.org/docs/man1.1.1/man1/req.html) command can be used both to create CSR's (certificate sign requests) and self-signed certificates (if called with the `-x509` option).
+
+The minimum requirement regarding the OpenSSL configuration file is the existence of the `[req]` section and containing a `distinguished_name` definition.
+The `distinguished_name` itself must refer to another section which may be empty.
+
+The absolute minimalistic way to create a self-signed root certificate is like this (with a rootkey already created by `openssl genrsa -out root_key.pem 2048`)
+* ``openssl req -key root_key.pem -x509 -out "root_cert.pem" -subj "/CN=the root"``
+
+To create a CSR (with a key already created by `openssl genrsa -out leaf_key.pem 2048`), you would correspondingly call
+* ``openssl req -key leaf_key.pem -new -out "leaf_cert.csr" -subj "/CN=the leaf"``
+
+In practice, generally all the certificate and CSR details a set via the OpenSSL configuration file.
 
 ### OpenSSL CA configuration basics
 
