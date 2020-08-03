@@ -112,7 +112,23 @@ If you need or want to have the configuration more explicit, then use something 
     distinguished_name = req_distinguished_name
    
     [req_distinguished_name]
-    # empty.
+    # empty
+    
+    [ca]
+    default_ca = CA_default  # The default ca section
+
+    [CA_default]
+    new_certs_dir = .
+    database = ./db
+    default_md = sha256
+    email_in_dn = no
+    rand_serial = yes
+    default_days = 365 
+    policy = CA_policy # The policy defines where to take subject DN fields from
+
+    [CA_policy]
+    # minimalistic policy
+    commonName = supplied
 
     [engine_section]
     pkcs11 = pkcs11_section
@@ -205,14 +221,18 @@ To create a CSR (with a key already created by `openssl genrsa -out leaf_key.pem
 
 In practice, generally all the certificate and CSR details a set via the OpenSSL configuration file.
 
-### OpenSSL CA configuration basics
+### OpenSSL ca configuration basics
+The [`openssl ca`](https://www.openssl.org/docs/man1.1.1/man1/ca.html) command can be used as a minimal CA (certificate authority) application.
 
-* https://jamielinux.com/docs/openssl-certificate-authority/introduction.html
-* https://raymii.org/s/articles/Get_Started_With_The_Nitrokey_HSM.html
+The minimum requirement regarding the OpenSSL configuration file is the existence of the `[ca]`section and some parameters as in the example above.
 
-### OpenSSL CSR configuration basics
+A minimalistic way to create acertificate based on a CSR and a root would be like this:
+* ``openssl ca -in leaf_cert.csr -out leaf_cert.pem -keyfile root_key.pem -cert root_cert.pem -batch``
+
+
 
 ### OpenSSL full configuration
+See example above
 
 
 ## Appendix 2: building the OpenSSL PKCS#11 engine on Windows
