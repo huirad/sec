@@ -294,6 +294,8 @@ In the `openssl.cnf`, I found it best to use forward slashes in paths instead of
 * https://github.com/OpenSC/libp11
 * https://github.com/OpenSC/OpenSC/wiki/SmartCardHSM
 * https://github.com/OpenSC/OpenSC/wiki/Using-pkcs11-tool-and-OpenSSL
+* https://github.com/CardContact/sc-hsm-embedded/wiki/PKCS11
+* http://www.cardcontact.de/index.html / https://www.smartcard-hsm.com/support.html
 * https://framkant.org/2018/04/smartcard-hsm-backed-openssl-ca/
 * https://jamielinux.com/docs/openssl-certificate-authority/index.html
 * http://cedric.dufour.name/blah/IT/SmartCardsHowto.html
@@ -302,4 +304,5 @@ In the `openssl.cnf`, I found it best to use forward slashes in paths instead of
 * https://developers.yubico.com/yubico-piv-tool/YKCS11/Supported_applications/pkcs11tool.html
   * https://www.yubico.com/products/services-software/download/smart-card-drivers-tools/
   * https://developers.yubico.com/YubiHSM2/Usage_Guides/OpenSSL_with_pkcs11_engine.html
+* https://vessokolev.blogspot.com/2019/06/smartcard-hsm-usb-token-using-smart.html
  
